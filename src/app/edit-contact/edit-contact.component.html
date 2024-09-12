@@ -7,7 +7,9 @@
       <nav>Name/Info</nav>
       <div>
         <input type="hidden" [ngModel]="contact.id" name="id" />
-        <input placeholder="First Name" [(ngModel)]="contact.firstName" name="firstName" required />
+        <input placeholder="First Name" [(ngModel)]="contact.firstName" name="firstName" required minlength="3" #firstName="ngModel" [class.error]="firstName.invalid && firstName.touched" />
+        <em *ngIf="firstName.errors?.['required'] && firstName.touched" > Enter a first name </em>
+        <em *ngIf="firstName.errors?.['minlength'] && firstName.touched" > First Name must be at least 3 characters </em>
         <input placeholder="Last Name"  [(ngModel)]="contact.lastName" name="lastName" />
         <input placeholder="Date of Birth"  [(ngModel)]="contact.dateOfBirth" name="dateOfBirth" />
         <div>
@@ -38,19 +40,21 @@
     <section>
       <nav>Address</nav>
       <div>
-        <div class="address" ngModelGroup="address">
+        <div class="address" ngModelGroup="address" #addressGroup="ngModelGroup" 
+        [class.error]="addressGroup.invalid && addressGroup.dirty">
           <div class="flex-group">
-            <input placeholder="Address" [(ngModel)]="contact.address.streetAddress" name="streetAddress"/>
+            <input placeholder="Address" [(ngModel)]="contact.address.streetAddress" name="streetAddress" required />
             <img src="/assets/plus-grey-blue.png" class="add" />
           </div>
-          <input placeholder="City" [(ngModel)]="contact.address.city" name="city" />
-          <input placeholder="State/Region" [(ngModel)]="contact.address.state" name="state" />
-          <input placeholder="Zip/Postal Code" [(ngModel)]="contact.address.postalCode" name="postalCode" />
+          <input placeholder="City" [(ngModel)]="contact.address.city" name="city" required />
+          <input placeholder="State/Region" [(ngModel)]="contact.address.state" name="state" required />
+          <input placeholder="Zip/Postal Code" [(ngModel)]="contact.address.postalCode" name="postalCode" required />
           <select [(ngModel)]="contact.address.addressType" name="addressType" >
             <option *ngFor="let addressType of addressTypes" [value]="addressType.value">{{addressType.title}}</option>
           </select>
         </div>
       </div>
+      <em *ngIf="addressGroup.invalid && addressGroup.dirty" > Incomplete Address </em>
     </section>
     <section>
       <nav>Notes:</nav>
@@ -60,7 +64,7 @@
     </section>
     <div class="buttons">
       <button class="secondary" type="button">Cancel</button>
-      <button class="primary" type="submit">Save</button>
+      <button class="primary" type="submit" [disabled]="contactForm.invalid" >Save</button>
       <button class="saving" disabled >Saving...</button>
     </div>
   </form>
